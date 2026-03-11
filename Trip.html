@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kế Hoạch Du Lịch: Concert & Săn Mây (26-29/04/2026)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS tuỳ chỉnh tối thiểu để hỗ trợ Tailwind */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            scroll-behavior: smooth;
+        }
+
+        .tab-active {
+            border-bottom: 2px solid #0d9488;
+            color: #0d9488;
+            font-weight: 600;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .hidden-content {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cấu hình bắt buộc cho Chart Container */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+        }
+
+        @media (min-width: 640px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 antialiased selection:bg-teal-200 selection:text-teal-900">
+
+    <!-- Chosen Palette: Warm Neutrals with Teal Accents (Slate-50 bg, Teal-600 accents, Slate-800 text) -->
+    <!-- Application Structure Plan: Dashboard/Timeline Hybrid. The SPA starts with a high-level overview and a dynamic interactive timeline as the core navigation. This allows users to see the flow from Da Nang -> Hung Yen -> Ta Xua step-by-step. Detailed sections for specific locations (Concert, Ta Xua) are broken down into interactive cards (for places/outfits) to avoid text overload. A chart visualizes time allocation to give a sense of pacing. This structure is chosen because travel plans are inherently chronological, but specific details (like what to wear at a specific peak) need to be easily discoverable without reading a wall of text. -->
+    <!-- Visualization & Content Choices: 
+         1. Timeline Logic -> Goal: Understand chronological flow -> Method: JS-powered Tabbed Interface -> Interaction: Click days to see transport/accommodation/activity -> Justification: Breaks 5 days into digestible chunks. 
+         2. Ta Xua Destinations -> Goal: Explore spots, outfits, times -> Method: Interactive CSS Grid Cards -> Interaction: Click 'Xem chi tiết' to toggle specific info (JS hide/show) -> Justification: Keeps layout clean, reveals detail on demand. NO SVG. 
+         3. Pacing Analysis -> Goal: Show balance of trip -> Method: Doughnut Chart (Chart.js) -> Interaction: Hover for tooltips -> Justification: Visual break, shows it's a balanced trip. NO SVG. 
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Relying on Unicode Emojis and CSS styling. -->
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full glass-panel z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center font-bold text-xl text-teal-700">
+                    ☁️ Hành Trình 2026
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#tong-quan" class="text-slate-600 hover:text-teal-600 transition-colors">Tổng Quan</a>
+                    <a href="#lich-trinh" class="text-slate-600 hover:text-teal-600 transition-colors">Lịch Trình</a>
+                    <a href="#diem-den" class="text-slate-600 hover:text-teal-600 transition-colors">Tà Xùa Info</a>
+                    <a href="#luu-y" class="text-slate-600 hover:text-teal-600 transition-colors">Lưu Ý & Ẩm Thực</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header / Hero -->
+    <header id="tong-quan" class="pt-24 pb-12 bg-gradient-to-b from-teal-50 to-slate-50">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-sm font-semibold text-teal-600 tracking-wider uppercase mb-2">Đà Nẵng ✈️ Hưng Yên 🚌 Tà Xùa
+            </p>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+                Âm Nhạc Bùng Nổ & <br> Chạm Tay Vào Biển Mây
+            </h1>
+            <p class="text-lg text-slate-600 mb-8">
+                Kế hoạch chi tiết 4 ngày 3 đêm (26/04 - 29/04/2026) kết hợp đu idol tại Concert "Anh Trai Vượt Ngàn
+                Chông Gai" ở Hưng Yên và hành trình chữa lành, săn mây tại Tà Xùa.
+            </p>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-2xl mb-1">📅</div>
+                    <div class="font-bold text-slate-800">4 Ngày 3 Đêm</div>
+                    <div class="text-xs text-slate-500">26/04 - 29/04</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-2xl mb-1">🎤</div>
+                    <div class="font-bold text-slate-800">Concert</div>
+                    <div class="text-xs text-slate-500">Tại Hưng Yên</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-2xl mb-1">☁️</div>
+                    <div class="font-bold text-slate-800">Săn Mây</div>
+                    <div class="text-xs text-slate-500">Đỉnh Tà Xùa</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                    <div class="text-2xl mb-1">✈️</div>
+                    <div class="font-bold text-slate-800">Xuất phát</div>
+                    <div class="text-xs text-slate-500">Từ Đà Nẵng</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <!-- Chart Section -->
+        <section>
+            <div class="mb-8 text-center max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">Phân Bổ Thời Gian Chuyến Đi</h2>
+                <p class="text-slate-600">Một góc nhìn tổng quan về cách chúng ta sẽ tận dụng 4 ngày nghỉ này. Sự cân
+                    bằng giữa giải trí, khám phá và di chuyển.</p>
+            </div>
+            <!-- Chart Container Bắt Buộc -->
+            <div class="chart-container bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                <canvas id="timeAllocationChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Interactive Itinerary Section -->
+        <section id="lich-trinh" class="scroll-mt-24">
+            <div class="mb-8 max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">Lịch Trình Chi Tiết</h2>
+                <p class="text-slate-600">Nhấp vào từng ngày để xem chi tiết phương tiện di chuyển, nơi ở và các hoạt
+                    động chính.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                <!-- Tabs -->
+                <div class="flex overflow-x-auto border-b border-slate-200" id="itinerary-tabs">
+                    <!-- JS will populate tabs here -->
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6 sm:p-8" id="itinerary-content">
+                    <!-- JS will populate content here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Tà Xùa Destinations (Interactive Cards) -->
+        <section id="diem-den" class="scroll-mt-24">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">Cẩm Nang Các Điểm Đến Tà Xùa</h2>
+                <p class="text-slate-600 max-w-3xl">Tà Xùa không chỉ có mây. Dưới đây là các tọa độ check-in không thể
+                    bỏ lỡ. Nhấn "Xem chi tiết" để biết thời điểm đẹp nhất và gợi ý trang phục phù hợp.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="destinations-grid">
+                <!-- Destination Card 1 -->
+                <div
+                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 p-6">
+                    <div class="text-4xl mb-4">⛰️</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Sống Lưng Khủng Long</h3>
+                    <p class="text-slate-600 text-sm mb-4">Con đường mòn nhỏ xíu nằm chênh vênh trên đỉnh núi, hai bên
+                        là vực sâu. Địa điểm săn mây huyền thoại.</p>
+                    <button class="text-teal-600 font-semibold text-sm hover:text-teal-800 transition-colors toggle-btn"
+                        data-target="info-1">Xem chi tiết ⬇️</button>
+
+                    <div id="info-1" class="hidden-content mt-4 pt-4 border-t border-slate-100 fade-in">
+                        <div class="mb-3">
+                            <span class="font-semibold text-slate-800 text-sm block">⏰ Thời gian đẹp nhất:</span>
+                            <span class="text-slate-600 text-sm">Sáng sớm (5:30 - 6:30) đón bình minh và biển
+                                mây.</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-slate-800 text-sm block">👗 Trang phục đề xuất:</span>
+                            <span class="text-slate-600 text-sm">Áo khoác gió/dạ ấm (rất lạnh và gió), giày leo núi/thể
+                                thao độ bám tốt. Chọn áo màu nổi (Đỏ, Vàng, Trắng) để nổi bật giữa nền mây trời.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destination Card 2 -->
+                <div
+                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 p-6">
+                    <div class="text-4xl mb-4">🌳</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Cây Táo Mèo Cô Đơn</h3>
+                    <p class="text-slate-600 text-sm mb-4">Biểu tượng của sự kiên cường trên đỉnh Gió. Khung cảnh nên
+                        thơ, mang chút mộng mơ và hoang sơ.</p>
+                    <button class="text-teal-600 font-semibold text-sm hover:text-teal-800 transition-colors toggle-btn"
+                        data-target="info-2">Xem chi tiết ⬇️</button>
+
+                    <div id="info-2" class="hidden-content mt-4 pt-4 border-t border-slate-100 fade-in">
+                        <div class="mb-3">
+                            <span class="font-semibold text-slate-800 text-sm block">⏰ Thời gian đẹp nhất:</span>
+                            <span class="text-slate-600 text-sm">Chiều tà (16:00 - 17:30) để ngắm hoàng hôn rực rỡ buông
+                                xuống núi rừng.</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-slate-800 text-sm block">👗 Trang phục đề xuất:</span>
+                            <span class="text-slate-600 text-sm">Phong cách Vintage, Boho (váy dài họa tiết thổ cẩm),
+                                hoặc phong cách bụi bặm (Denim, áo da mỏng). Thêm phụ kiện như mũ nồi, khăn quàng cổ
+                                mỏng.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destination Card 3 -->
+                <div
+                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 p-6">
+                    <div class="text-4xl mb-4">🐬</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Mỏm Cá Heo</h3>
+                    <p class="text-slate-600 text-sm mb-4">Tảng đá lớn vươn ra khỏi vách núi hình dáng giống đầu chú cá
+                        heo đang bơi giữa biển mây.</p>
+                    <button class="text-teal-600 font-semibold text-sm hover:text-teal-800 transition-colors toggle-btn"
+                        data-target="info-3">Xem chi tiết ⬇️</button>
+
+                    <div id="info-3" class="hidden-content mt-4 pt-4 border-t border-slate-100 fade-in">
+                        <div class="mb-3">
+                            <span class="font-semibold text-slate-800 text-sm block">⏰ Thời gian đẹp nhất:</span>
+                            <span class="text-slate-600 text-sm">Sáng (7:00 - 9:00) khi nắng lên làm rõ khung cảnh bên
+                                dưới, hoặc hoàng hôn.</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-slate-800 text-sm block">👗 Trang phục đề xuất:</span>
+                            <span class="text-slate-600 text-sm">Gọn gàng, năng động. Tránh váy xòe quá dài vì phải trèo
+                                lên đá. Quần jeans, áo len cổ lọ, boot da là sự lựa chọn an toàn và ngầu.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practical Info: Food & Tips -->
+        <section id="luu-y" class="scroll-mt-24 grid md:grid-cols-2 gap-8 mb-12">
+            <!-- Food -->
+            <div class="bg-amber-50 rounded-2xl p-8 border border-amber-100">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">🍲 Must-Try Ẩm Thực Tà Xùa
+                </h2>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3">
+                        <span class="text-xl">🐔</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Lẩu Cá Tầm / Lẩu Gà Đen Tà Xùa</h4>
+                            <p class="text-sm text-slate-600">Đặc biệt Lẩu Cá Tầm tại Nhà hàng H'mong là "chân ái" trong
+                                cái lạnh ban đêm.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-xl">🍚</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Cơm Suất (Nhà hàng A Phủ)</h4>
+                            <p class="text-sm text-slate-600">Những bữa cơm đầy đặn chuẩn vị Tây Bắc, phù hợp nạp năng
+                                lượng sau cả ngày dài.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-xl">🥩</span>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Ăn Vặt Đỉnh Gió</h4>
+                            <p class="text-sm text-slate-600">Thưởng thức lạp xưởng bùng vị và nhâm nhi thịt trâu gác
+                                bếp đặc sản cực cuốn.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Tips -->
+            <div class="bg-teal-50 rounded-2xl p-8 border border-teal-100">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">💡 Lưu Ý Quan Trọng</h2>
+                <ul class="space-y-3 text-slate-700">
+                    <li class="flex items-start gap-2">
+                        <span class="text-teal-600 mt-1">✓</span>
+                        <span><strong>Thời tiết & Trang phục:</strong> Sáng sớm rất lạnh (cần áo phao), trưa Thảo Nguyên
+                            rất nắng (cần kem chống nắng và ô). Tà Xùa thay đổi thời tiết nhanh nên mang đồ linh hoạt,
+                            nhớ mang thuốc dự phòng.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-teal-600 mt-1">✓</span>
+                        <span><strong>Tiền mặt:</strong> Trên Tà Xùa sóng điện thoại/4G có thể yếu ở một số điểm, nên
+                            mang sẵn tiền mặt để thanh toán ăn uống nhỏ lẻ.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-teal-600 mt-1">✓</span>
+                        <span><strong>Trang phục Concert:</strong> Ưu tiên quần áo thoáng mát, thấm mồ hôi, giày thể
+                            thao đế mềm vì sẽ đứng và di chuyển rất nhiều. Đừng quên mang theo lightstick và sạc dự
+                            phòng!</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-sm">
+        <p>Bản kế hoạch được thiết kế cho trải nghiệm tối ưu. Chúc bạn có một chuyến đi bùng nổ và đáng nhớ!</p>
+        <p class="mt-2">Đà Nẵng ➔ Hưng Yên ➔ Tà Xùa | Tháng 4/2026</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- DATA cho Timeline Lịch Trình ---
+        const itineraryData = [
+            {
+                id: 'day1',
+                title: 'Ngày 1 (26/04): Đà Nẵng – Hưng Yên (Concert Night)',
+                date: 'Chủ Nhật, 26/04/2026',
+                transport: '✈️ Bay DAD - HAN (Sáng). 🚕 Di chuyển về Vinhomes Ocean Park 2/3.',
+                accommodation: '🏨 Nghỉ đêm tại Vinhomes Ocean Park (Hưng Yên).',
+                activities: [
+                    'Sáng: Bay từ Đà Nẵng (DAD) đi Nội Bài (HAN). Di chuyển về Vinhomes Ocean Park 2/3 (Hưng Yên).',
+                    'Trưa: Check-in homestay tại Ocean Park. Ăn trưa nhẹ tại khu vực Mega Grand World.',
+                    'Chiều: Tự do tham quan và check-in tại Mega Grand World Hà Nội (Venice thu nhỏ). Chuẩn bị phụ kiện, lightstick cho đêm diễn.',
+                    'Tối: Tham dự Concert Anh Trai Vượt Ngàn Chông Gai. Sau concert, có thể đi ăn đêm gần khu vực sân khấu. Nghỉ đêm tại Hưng Yên.'
+                ],
+                outfit: 'Thoải mái, cá tính, chất liệu thấm hút mồ hôi. Bắt buộc: Giày sneaker êm chân để "quẩy" suốt 3-4 tiếng.',
+                image: 'https://salt.tkbcdn.com/ts/ds/74/ca/18/173014220d7b30fb44d26955187b13e9.png' // Dán link ảnh vào đây
+            },
+            {
+                id: 'day2',
+                title: 'Ngày 2 (27/04): Hưng Yên – Hà Nội – Tà Xùa',
+                date: 'Thứ Hai, 27/04/2026',
+                transport: '🚌 Di chuyển về Hà Nội. 🚐 Limousine Hà Nội - Tà Xùa (12h30 - 13h00).',
+                accommodation: '🏡 Păng Nhù Home’s (hoặc homestay trung tâm Tà Xùa).',
+                activities: [
+                    'Sáng: Ngủ bù sau đêm concert. Sau đó ăn sáng, cafe thong thả tại Ecopark hoặc Ocean Park.',
+                    'Trưa: Di chuyển về trung tâm Hà Nội (điểm đón BigC Thăng Long/Mỹ Đình) để lên xe Limousine đi Tà Xùa.',
+                    'Chiều/Tối (18h30): Đến Tà Xùa, check-in homestay nghỉ ngơi sau chuyến đi dài.',
+                    'Tối: Ăn cơm suất đầy đặn tại Nhà hàng A Phủ. Ghé Cafe H’mong nghe nhạc, giao lưu văn nghệ.'
+                ],
+                outfit: 'Đồ dạo phố nhẹ nhàng buổi sáng. Buổi tối mặc đồ ấm khi tới Tà Xùa vì thời tiết sẽ lạnh.',
+                image: 'https://toongadventure.vn/wp-content/uploads/2025/07/kinh-nghiem-di-ta-xu-thump.jpg' // Dán link ảnh vào đây
+            },
+            {
+                id: 'day3',
+                title: 'Ngày 3 (28/04): Sống Lưng Khủng Long – Thảo Nguyên - Mỏm Cá Heo – Hoàng Hôn Đỉnh Gió',
+                date: 'Thứ Ba, 28/04/2026',
+                transport: '🏍️ Thuê xe máy tại trung tâm xã Tà Xùa để tiện di chuyển.',
+                accommodation: '🏡 Homestay tại Tà Xùa.',
+                activities: [
+                    'Sáng sớm (05:00): Di chuyển đi Sống Lưng Khủng Long săn mây bình minh. Ăn sáng Mì tôm "view triệu đô". Ghé Khe Cải chụp ảnh.',
+                    'Trưa: Quay về trung tâm. Ghé Cafe H’mong uống Matcha sữa béo ngậy để nghỉ ngơi.',
+                    'Chiều/Hoàng hôn: Di chuyển Thảo Nguyên – Mỏm Cá Heo. Về lại Đỉnh Gió săn hoàng hôn rực rỡ, ghé Mị Ơi hoặc Hiên uống cafe.',
+                    'Tối: Bữa tiệc tổng kết với món Lẩu Cá Tầm tại Nhà hàng H’mong. Mua lạp xưởng và thịt trâu gác bếp làm quà.'
+                ],
+                outfit: 'Sáng cực lạnh cần áo phao. Trưa Thảo Nguyên rất nắng cần chuẩn bị váy trắng/vintage, kem chống nắng và ô.',
+                image: 'https://cms.jtravel2.okhub-tech.com/jtravel/api/v1/files/stream/32a22bcaebc774bde2dc6.jpeg' // Dán link ảnh vào đây
+            },
+            {
+                id: 'day4',
+                title: 'Ngày 4 (29/04): Săn Mây Lưng Chừng Đồi – Nội Bài – Đà Nẵng',
+                date: 'Thứ Tư, 29/04/2026',
+                transport: '🏍️ Xe máy (Sáng). 🚐 Limousine Tà Xùa - Nội Bài (12h30). ✈️ Bay HAN - DAD (Tối muộn).',
+                accommodation: '🏠 Ngủ trên máy bay và nghỉ ngơi tại nhà.',
+                activities: [
+                    'Sáng (06:00): Ghé quán Lưng Chừng Đồi thưởng thức Cacao nóng và tận hưởng không gian biển mây.',
+                    'Sáng (09:00): Đi sâu vào hướng Xím Vàng, chụp ảnh ruộng bậc thang, Thác Xím Vàng hoặc Bản Sồng Chống.',
+                    'Trưa (11:00): Quay về trung tâm ăn trưa nhanh, thu dọn hành lý.',
+                    'Chiều/Tối: Lên xe Limousine từ Tà Xùa đi thẳng ra Sân bay Nội Bài. Tối đáp chuyến bay về Đà Nẵng. Kết thúc hành trình thành công.'
+                ],
+                outfit: 'Áo khoác ấm buổi sáng. Trưa mặc trang phục gọn nhẹ, thoải mái để đi xe và máy bay cả ngày.',
+                image: 'https://phetravel.com/uploads/ta-xua-san-may-2.png' // Dán link ảnh vào đây
+            }
+        ];
+
+        // --- Render Timeline & Tab Logic ---
+        const tabsContainer = document.getElementById('itinerary-tabs');
+        const contentContainer = document.getElementById('itinerary-content');
+
+        function renderItinerary() {
+            itineraryData.forEach((day, index) => {
+                // Build Tabs
+                const tab = document.createElement('button');
+                tab.className = `whitespace-nowrap py-4 px-6 font-medium text-sm transition-colors focus:outline-none ${index === 0 ? 'tab-active' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`;
+                tab.innerText = `Ngày ${day.id.replace('day', '')}: ${day.date.split(',')[0]}`;
+                tab.onclick = () => switchTab(index, tab);
+                tabsContainer.appendChild(tab);
+
+                // Build Content
+                const contentDiv = document.createElement('div');
+                contentDiv.id = `content-${index}`;
+                contentDiv.className = index === 0 ? 'fade-in block' : 'hidden';
+
+                let activitiesHTML = day.activities.map(act => `<li class="flex items-start gap-2"><span class="text-teal-500 mt-1">▪</span><span>${act}</span></li>`).join('');
+
+                contentDiv.innerHTML = `
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">${day.title}</h3>
+                    <p class="text-slate-500 mb-6 font-medium">${day.date}</p>
+                    
+                    <div class="mb-6 overflow-hidden rounded-xl shadow-sm border border-slate-100">
+                        <img src="${day.image}" alt="Ảnh ${day.title}" class="w-full h-48 sm:h-64 object-cover bg-slate-100" />
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 p-4 rounded-lg flex items-start gap-3">
+                            <span class="text-xl">🚕</span>
+                            <div><strong class="text-slate-800">Di chuyển:</strong> <span class="text-slate-600">${day.transport}</span></div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg flex items-start gap-3">
+                            <span class="text-xl">🛏️</span>
+                            <div><strong class="text-slate-800">Lưu trú:</strong> <span class="text-slate-600">${day.accommodation}</span></div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg flex items-start gap-3 border-l-4 border-teal-500">
+                            <span class="text-xl">👗</span>
+                            <div><strong class="text-slate-800">Trang phục:</strong> <span class="text-slate-600">${day.outfit}</span></div>
+                        </div>
+                        <div class="mt-6">
+                            <h4 class="font-bold text-lg text-slate-800 mb-3 border-b pb-2">Hoạt động chính</h4>
+                            <ul class="space-y-2 text-slate-700">
+                                ${activitiesHTML}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                contentContainer.appendChild(contentDiv);
+            });
+        }
+
+        function switchTab(activeIndex, clickedTab) {
+            // Update tabs styling
+            const allTabs = tabsContainer.querySelectorAll('button');
+            allTabs.forEach((t, i) => {
+                if (i === activeIndex) {
+                    t.className = 'whitespace-nowrap py-4 px-6 font-medium text-sm transition-colors focus:outline-none tab-active';
+                } else {
+                    t.className = 'whitespace-nowrap py-4 px-6 font-medium text-sm transition-colors focus:outline-none text-slate-500 hover:text-slate-700 hover:bg-slate-50';
+                }
+            });
+
+            // Update content visibility
+            const allContents = contentContainer.children;
+            Array.from(allContents).forEach((c, i) => {
+                if (i === activeIndex) {
+                    c.className = 'fade-in block';
+                } else {
+                    c.className = 'hidden';
+                }
+            });
+        }
+
+        // --- Interactive Destination Cards Logic ---
+        function setupToggleButtons() {
+            const buttons = document.querySelectorAll('.toggle-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const targetId = this.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+
+                    if (targetEl.classList.contains('hidden-content')) {
+                        targetEl.classList.remove('hidden-content');
+                        this.innerHTML = 'Thu gọn ⬆️';
+                    } else {
+                        targetEl.classList.add('hidden-content');
+                        this.innerHTML = 'Xem chi tiết ⬇️';
+                    }
+                });
+            });
+        }
+
+        // --- Chart.js Setup ---
+        function initChart() {
+            const ctx = document.getElementById('timeAllocationChart').getContext('2d');
+
+            // Data interpretation for the 4 days (approximate active hours)
+            const data = {
+                labels: ['Di chuyển (Bay/Xe)', 'Concert & Fandom', 'Khám phá Tà Xùa', 'Nghỉ ngơi/Ăn uống'],
+                datasets: [{
+                    label: 'Tỷ lệ thời gian (%)',
+                    data: [25, 15, 30, 30], // Tỷ lệ ước tính
+                    backgroundColor: [
+                        '#94a3b8', // Di chuyển (slate-400)
+                        '#0f766e', // Concert (teal-700)
+                        '#14b8a6', // Khám phá (teal-500)
+                        '#e2e8f0'  // Nghỉ ngơi (slate-200)
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            };
+
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Quan trọng để chart vừa với container div
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: "'Inter', sans-serif" },
+                                color: '#334155',
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            padding: 12,
+                            titleFont: { family: "'Inter', sans-serif", size: 14 },
+                            bodyFont: { family: "'Inter', sans-serif", size: 13 },
+                            callbacks: {
+                                label: function (context) {
+                                    return ' ' + context.label + ': ' + context.parsed + '% chuyến đi';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            };
+
+            new Chart(ctx, config);
+        }
+
+        // --- Initialize App ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderItinerary();
+            setupToggleButtons();
+            initChart();
+        });
+    </script>
+</body>
+
+</html>
